@@ -1,0 +1,6 @@
+framework module MaterialPageControl {
+  umbrella header "MaterialPageControl-umbrella.h"
+
+  export *
+  module * { export * }
+}
