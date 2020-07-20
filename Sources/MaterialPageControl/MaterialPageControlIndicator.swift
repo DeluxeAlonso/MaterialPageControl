@@ -25,6 +25,7 @@ public class MaterialPageControlIndicator: CAShapeLayer {
       CATransaction.commit()
     }
   }
+  
   var isAnimating: Bool = false
   
   init(center: CGPoint, radius: CGFloat) {
@@ -32,6 +33,10 @@ public class MaterialPageControlIndicator: CAShapeLayer {
     frame = .init(x: center.x - radius, y: center.y - radius, width: radius * 2, height: radius * 2)
     path = circlePath(with: radius)
     zPosition = 1
+  }
+  
+  public override init(layer: Any) {
+    super.init(layer: layer)
   }
   
   required init?(coder aDecoder: NSCoder) {

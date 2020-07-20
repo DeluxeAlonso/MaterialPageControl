@@ -58,7 +58,7 @@ public class MaterialPageControl: UIControl {
         }
     }
     
-    @inline(__always) private static func normalizeValue(_ value: CGFloat, _ minRange: CGFloat, _ maxRange: CGFloat) -> CGFloat {
+    private static func normalizeValue(_ value: CGFloat, _ minRange: CGFloat, _ maxRange: CGFloat) -> CGFloat {
         let diff = maxRange - minRange
         return (diff > 0) ? ((value - minRange) / diff) : 0
     }
