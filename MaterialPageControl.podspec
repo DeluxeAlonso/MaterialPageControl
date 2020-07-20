@@ -4,7 +4,7 @@ Pod::Spec.new do |s|
   s.summary          = 'Material page control written entirely in Swift.'
  
   s.description      = <<-DESC
-Material page control written entirely in Swift.
+Material page control written entirely in Swift 5 with customizable attributes.
                        DESC
  
   s.homepage         = 'https://github.com/DeluxeAlonso/MaterialPageControl'
