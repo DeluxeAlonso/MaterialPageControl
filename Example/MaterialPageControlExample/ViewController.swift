@@ -47,7 +47,14 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
     }
-    
+
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        coordinator.animate(alongsideTransition: { _ in
+            self.collectionView.collectionViewLayout.invalidateLayout()
+        }, completion: nil)
+    }
+
     private func setupUI() {
         view.backgroundColor = .systemBackground
         setupPageControl()
@@ -83,6 +90,7 @@ class ViewController: UIViewController {
 }
 
 extension ViewController: UICollectionViewDataSource {
+
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return colors.count
     }
@@ -107,15 +115,17 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDelegateFlow
 // MARK: - UIScrollViewDelegate
 
 extension ViewController: UIScrollViewDelegate {
-  func scrollViewDidScroll(_ scrollView: UIScrollView) {
-    pageControl.scrollViewDidScroll(scrollView)
-  }
-  
-  func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-    pageControl.scrollViewDidEndDecelerating(scrollView)
-  }
-  
-  func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-    pageControl.scrollViewDidEndScrollingAnimation(scrollView)
-  }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        pageControl.scrollViewDidScroll(scrollView)
+    }
+
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        pageControl.scrollViewDidEndDecelerating(scrollView)
+    }
+
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        pageControl.scrollViewDidEndScrollingAnimation(scrollView)
+    }
+
 }

@@ -211,15 +211,15 @@ extension MaterialPageControl: UIScrollViewDelegate {
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let scrolledPercentageValue = scrolledPercentage(scrollView)
         
-        if scrollView.layer.animationKeys()?.contains(MaterialPageControl.materialPageControlScrollViewContentOffset) ?? false {
-            let animation = scrollView.layer.animation(forKey: MaterialPageControl.materialPageControlScrollViewContentOffset)
-            
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(animation!.beginTime * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC), execute: {
+        if let animationKeys = scrollView.layer.animationKeys(),
+           animationKeys.contains(MaterialPageControl.materialPageControlScrollViewContentOffset),
+           let animation = scrollView.layer.animation(forKey: MaterialPageControl.materialPageControlScrollViewContentOffset) {
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(animation.beginTime * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC), execute: {
                 let currentPage = self.scrolledPageNumber(scrollView)
-                self.setCurrentPage(currentPage, animated: true, duration: animation!.duration)
+                self.setCurrentPage(currentPage, animated: true, duration: animation.duration)
                 
                 let transformX: CGFloat = scrolledPercentageValue * self.trackLength
-                self.animatedIndicator.updateIndicatorTransformX(transformX, animated: true, duration: animation!.duration, mediaTimingFunction: animation?.timingFunction)
+                self.animatedIndicator.updateIndicatorTransformX(transformX, animated: true, duration: animation.duration, mediaTimingFunction: animation.timingFunction)
             })
         } else if scrolledPercentageValue >= 0 && scrolledPercentageValue <= 1 && numberOfPages > 0 {
             // Update active indicator position.
