@@ -19,10 +19,10 @@ public class MaterialPageControl: UIControl {
     private static let pageControlMinimumHeight: CGFloat = 48
     
     // Matches native UIPageControl indicator radius.
-    private static let pageControlIndicatorRadius = CGFloat(3.5)
+    //private static let pageControlIndicatorRadius = CGFloat(3.5)
     
     // Matches native UIPageControl indicator spacing margin.
-    private static let pageControlIndicatorMargin = pageControlIndicatorRadius * 2.5
+    //private static let pageControlIndicatorMargin = pageControlIndicatorRadius * 2.5
     
     // Delay for revealing indicators staggered towards current page indicator.
     private static let pageControlIndicatorShowDelay: TimeInterval = 0.04
@@ -57,6 +57,16 @@ public class MaterialPageControl: UIControl {
             setNeedsLayout()
         }
     }
+
+    public var pageIndicatorRadius: CGFloat = 3.5 {
+        didSet {
+            setNeedsLayout()
+        }
+    }
+
+    private var pageIndicatorMargin: CGFloat {
+        return pageIndicatorRadius * 2.5
+    }
     
     private static func normalizeValue(_ value: CGFloat, _ minRange: CGFloat, _ maxRange: CGFloat) -> CGFloat {
         let diff = maxRange - minRange
@@ -82,7 +92,7 @@ public class MaterialPageControl: UIControl {
     }
     
     private func commonMDCPageControlInit() {
-        let radius = MaterialPageControl.pageControlIndicatorRadius
+        let radius = pageIndicatorRadius
         let topEdge = CGFloat(floor(bounds.height - (radius * 2)) / 2)
         let containerFrame = CGRect(x: 0, y: topEdge, width: bounds.width, height: radius * 2)
         containerView = UIView(frame: containerFrame)
@@ -150,7 +160,7 @@ public class MaterialPageControl: UIControl {
             trackLayer.drawAndExtendTrack(fromStart: startPoint, toEnd: endPoint, completion: completionBlock)
         } else {
             let point = indicatorPositions[currentPage].cgPointValue
-            animatedIndicator.updateIndicatorTransformX(point.x - MaterialPageControl.pageControlIndicatorRadius)
+            animatedIndicator.updateIndicatorTransformX(point.x - pageIndicatorRadius)
             trackLayer.reset(at: point)
             
             CATransaction.begin()
@@ -231,7 +241,7 @@ extension MaterialPageControl: UIScrollViewDelegate {
             let scrolledPageNumberValue = scrolledPageNumber(scrollView)
             var startPoint = indicatorPositions[scrolledPageNumberValue].cgPointValue
             var endPoint = startPoint
-            let radius = MaterialPageControl.pageControlIndicatorRadius
+            let radius = pageIndicatorRadius
             if transformX > startPoint.x - radius {
                 if isRTL() {
                     endPoint = (indicatorPositions[scrolledPageNumberValue - 1]).cgPointValue
@@ -435,8 +445,8 @@ extension MaterialPageControl {
         }
         
         // Create indicators.
-        let radius = MaterialPageControl.pageControlIndicatorRadius
-        let margin = MaterialPageControl.pageControlIndicatorMargin
+        let radius = pageIndicatorRadius
+        let margin = pageIndicatorMargin
         for i in 0..<numberOfPages {
             let offsetX = CGFloat(i) * (margin + (radius * 2))
             let offsetY = radius
@@ -464,7 +474,7 @@ extension MaterialPageControl {
         let center = CGPoint(x: radius, y: radius)
         let point = indicatorPositions[currentPage].cgPointValue
         animatedIndicator = MaterialPageControlIndicator(center: center, radius: radius)
-        animatedIndicator.updateIndicatorTransformX(point.x - MaterialPageControl.pageControlIndicatorRadius)
+        animatedIndicator.updateIndicatorTransformX(point.x - pageIndicatorRadius)
         containerView.layer.addSublayer(animatedIndicator)
         
         setNeedsLayout()
