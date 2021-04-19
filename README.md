@@ -38,6 +38,7 @@ You can initialize MaterialPageControl programatically or through interface buil
 let pageControl = MaterialPageControl()
 pageControl.pageIndicatorTintColor = .gray
 pageControl.currentPageIndicatorTintColor = .black
+pageControl.pageIndicatorRadius = 10.0
 pageControl.numberOfPages = 3
 ```
 
