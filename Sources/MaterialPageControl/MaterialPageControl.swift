@@ -52,12 +52,6 @@ public class MaterialPageControl: UIControl {
         }
     }
 
-    public var pageIndicatorRadius: CGFloat = 10.0 {
-        didSet {
-            setNeedsLayout()
-        }
-    }
-
     private var pageIndicatorMargin: CGFloat {
         return pageIndicatorRadius * 2.5
     }
@@ -74,6 +68,9 @@ public class MaterialPageControl: UIControl {
     private var trackLayer: MaterialPageControlTrackLayer!
     private var trackLength: CGFloat = 0.0
     private var isDeferredScrolling = false
+    private var pageIndicatorRadius: CGFloat = 3.5
+
+    // MARK: - Initializers
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -84,7 +81,36 @@ public class MaterialPageControl: UIControl {
         super.init(coder: aDecoder)
         commonMDCPageControlInit()
     }
-    
+
+    public init(pageIndicatorRadius: CGFloat) {
+        self.pageIndicatorRadius = pageIndicatorRadius
+        super.init(frame: .zero)
+        commonMDCPageControlInit()
+    }
+
+    // MARK: - Lifecycle
+
+    override open func layoutSubviews() {
+        super.layoutSubviews()
+        if numberOfPages == 0 {
+            isHidden = true
+            return
+        }
+        isHidden = false
+
+        for pageNumber in 0..<indicators.count {
+            let indicator = indicators[pageNumber]
+            if pageNumber == Int(currentPage) {
+                indicator.isHidden = true
+            }
+            indicator.color = pageIndicatorTintColor
+        }
+        animatedIndicator.color = currentPageIndicatorTintColor
+        trackLayer.trackColor = pageIndicatorTintColor
+    }
+
+    // MARK: - Private
+
     private func commonMDCPageControlInit() {
         let radius = pageIndicatorRadius
         let topEdge = CGFloat(floor(bounds.height - (radius * 2)) / 2)
@@ -104,30 +130,11 @@ public class MaterialPageControl: UIControl {
         addGestureRecognizer(tapGestureRecognizer)
     }
     
-    override open func layoutSubviews() {
-        super.layoutSubviews()
-        if numberOfPages == 0 {
-            isHidden = true
-            return
-        }
-        isHidden = false
-        
-        for pageNumber in 0..<indicators.count {
-            let indicator = indicators[pageNumber]
-            if pageNumber == Int(currentPage) {
-                indicator.isHidden = true
-            }
-            indicator.color = pageIndicatorTintColor
-        }
-        animatedIndicator.color = currentPageIndicatorTintColor
-        trackLayer.trackColor = pageIndicatorTintColor
-    }
-    
-    func setCurrentPage(_ currentPage: Int, animated: Bool) {
+    private func setCurrentPage(_ currentPage: Int, animated: Bool) {
         setCurrentPage(currentPage, animated: animated, duration: 0)
     }
     
-    func setCurrentPage(_ currentPage: Int, animated: Bool, duration: TimeInterval) {
+    private func setCurrentPage(_ currentPage: Int, animated: Bool, duration: TimeInterval) {
         let previousPage = self.currentPage
         let shouldReverse = previousPage > currentPage
         self.currentPage = currentPage
@@ -164,14 +171,16 @@ public class MaterialPageControl: UIControl {
         }
     }
     
-    func isPageIndexValid(_ nextPage: Int) -> Bool {
+    private func isPageIndexValid(_ nextPage: Int) -> Bool {
         return nextPage >= 0 && nextPage < numberOfPages
     }
+
 }
 
 // MARK: - UIView(UIViewGeometry)
 
 extension MaterialPageControl {
+
     override open var intrinsicContentSize: CGSize {
         return sizeForNumber(forPageCount: numberOfPages,
                              indicatorRadius: pageIndicatorRadius,
@@ -191,11 +200,13 @@ extension MaterialPageControl {
         let height = max(MaterialPageControl.pageControlMinimumHeight, indicatorRadius * 2)
         return CGSize(width: width, height: height)
     }
+
 }
 
 // MARK: - Scrolling
 
 extension MaterialPageControl {
+
     func scrolledPageNumber(_ scrollView: UIScrollView?) -> Int {
         let unboundedPageNumberLTR = lround(Double((scrollView?.contentOffset.x ?? 0.0) / (scrollView?.frame.size.width ?? 0.0)))
         let scrolledPageNumberLTR = max(0, min(numberOfPages - 1, unboundedPageNumberLTR))
@@ -210,6 +221,7 @@ extension MaterialPageControl {
         // the edge of its content, it will return either a negative value or value above 1.
         return MaterialPageControl.normalizeValue((scrollView?.contentOffset.x)!, 0, (scrollView?.contentSize.width ?? 0.0) - (scrollView?.frame.size.width ?? 0.0))
     }
+
 }
 
 // MARK: - UIScrollViewDelegate
