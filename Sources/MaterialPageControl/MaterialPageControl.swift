@@ -52,6 +52,12 @@ public class MaterialPageControl: UIControl {
         }
     }
 
+    public var pageIndicatorRadius: CGFloat = 3.5 {
+        didSet {
+            updateContainerView(with: pageIndicatorRadius)
+        }
+    }
+
     private var pageIndicatorMargin: CGFloat {
         return pageIndicatorRadius * 2.5
     }
@@ -62,13 +68,13 @@ public class MaterialPageControl: UIControl {
     }
     
     private var containerView: UIView!
+    private var containerFrame: CGRect!
     private var indicators: [MaterialPageControlIndicator] = []
     private var indicatorPositions: [NSValue] = []
     private var animatedIndicator: MaterialPageControlIndicator!
     private var trackLayer: MaterialPageControlTrackLayer!
     private var trackLength: CGFloat = 0.0
     private var isDeferredScrolling = false
-    private var pageIndicatorRadius: CGFloat = 3.5
 
     // MARK: - Initializers
     
@@ -79,12 +85,6 @@ public class MaterialPageControl: UIControl {
     
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        commonMDCPageControlInit()
-    }
-
-    public init(pageIndicatorRadius: CGFloat) {
-        self.pageIndicatorRadius = pageIndicatorRadius
-        super.init(frame: .zero)
         commonMDCPageControlInit()
     }
 
@@ -114,7 +114,7 @@ public class MaterialPageControl: UIControl {
     private func commonMDCPageControlInit() {
         let radius = pageIndicatorRadius
         let topEdge = CGFloat(floor(bounds.height - (radius * 2)) / 2)
-        let containerFrame = CGRect(x: 0, y: topEdge, width: bounds.width, height: radius * 2)
+        containerFrame = CGRect(x: 0, y: topEdge, width: bounds.width, height: radius * 2)
         containerView = UIView(frame: containerFrame)
         
         trackLayer = MaterialPageControlTrackLayer(radius: radius)
@@ -128,6 +128,15 @@ public class MaterialPageControl: UIControl {
         pageIndicatorTintColor = UIColor(white: MaterialPageControl.pageControlPageIndicatorWhiteColor, alpha: 1)
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture(_:)))
         addGestureRecognizer(tapGestureRecognizer)
+    }
+
+    private func updateContainerView(with pageIndicatorRadius: CGFloat) {
+        let topEdge = CGFloat(floor(bounds.height - (pageIndicatorRadius * 2)) / 2)
+        containerFrame = CGRect(x: 0, y: topEdge, width: bounds.width, height: pageIndicatorRadius * 2)
+
+        trackLayer = MaterialPageControlTrackLayer(radius: pageIndicatorRadius)
+        containerView.layer.addSublayer(trackLayer)
+        containerView.layoutIfNeeded()
     }
     
     private func setCurrentPage(_ currentPage: Int, animated: Bool) {
