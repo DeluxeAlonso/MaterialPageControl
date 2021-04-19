@@ -179,18 +179,22 @@ public class MaterialPageControl: UIControl {
 
 extension MaterialPageControl {
     override open var intrinsicContentSize: CGSize {
-        return MaterialPageControl.sizeForNumber(ofPages: numberOfPages)
+        return sizeForNumber(forPageCount: numberOfPages,
+                             indicatorRadius: pageIndicatorRadius,
+                             indicatorMargin: pageIndicatorMargin)
     }
     
     override open func sizeThatFits(_ size: CGSize) -> CGSize {
-        return MaterialPageControl.sizeForNumber(ofPages: numberOfPages)
+        return sizeForNumber(forPageCount: numberOfPages,
+                             indicatorRadius: pageIndicatorRadius,
+                             indicatorMargin: pageIndicatorMargin)
     }
     
-    class func sizeForNumber(ofPages pageCount: Int) -> CGSize {
-        let radius = pageControlIndicatorRadius
-        let margin = pageControlIndicatorMargin
-        let width = CGFloat(pageCount) * ((radius * 2) + margin) - margin
-        let height = max(pageControlMinimumHeight, radius * 2)
+    func sizeForNumber(forPageCount pageCount: Int,
+                       indicatorRadius: CGFloat,
+                       indicatorMargin: CGFloat) -> CGSize {
+        let width = CGFloat(pageCount) * ((indicatorRadius * 2) + indicatorMargin) - indicatorMargin
+        let height = max(MaterialPageControl.pageControlMinimumHeight, indicatorRadius * 2)
         return CGSize(width: width, height: height)
     }
 }
@@ -465,7 +469,9 @@ extension MaterialPageControl {
         
         // Resize container view to keep indicators centered.
         let frameWidth = containerView.frame.size.width
-        let controlSize = MaterialPageControl.sizeForNumber(ofPages: numberOfPages)
+        let controlSize = sizeForNumber(forPageCount: numberOfPages,
+                                        indicatorRadius: pageIndicatorRadius,
+                                        indicatorMargin: pageIndicatorMargin)
         containerView.frame = containerView.frame.insetBy(dx: (frameWidth - controlSize.width) / 2, dy: 0)
         trackLength = containerView.frame.width - (radius * 2)
         
