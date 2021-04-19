@@ -18,12 +18,6 @@ public class MaterialPageControl: UIControl {
     // Matches native UIPageControl minimum height.
     private static let pageControlMinimumHeight: CGFloat = 48
     
-    // Matches native UIPageControl indicator radius.
-    private static let pageControlIndicatorRadius = CGFloat(3.5)
-    
-    // Matches native UIPageControl indicator spacing margin.
-    private static let pageControlIndicatorMargin = pageControlIndicatorRadius * 2.5
-    
     // Delay for revealing indicators staggered towards current page indicator.
     private static let pageControlIndicatorShowDelay: TimeInterval = 0.04
     
@@ -57,6 +51,16 @@ public class MaterialPageControl: UIControl {
             setNeedsLayout()
         }
     }
+
+    public var pageIndicatorRadius: CGFloat = 3.5 {
+        didSet {
+            updateContainerView(with: pageIndicatorRadius)
+        }
+    }
+
+    private var pageIndicatorMargin: CGFloat {
+        return pageIndicatorRadius * 2.5
+    }
     
     private static func normalizeValue(_ value: CGFloat, _ minRange: CGFloat, _ maxRange: CGFloat) -> CGFloat {
         let diff = maxRange - minRange
@@ -64,12 +68,15 @@ public class MaterialPageControl: UIControl {
     }
     
     private var containerView: UIView!
+    private var containerFrame: CGRect!
     private var indicators: [MaterialPageControlIndicator] = []
     private var indicatorPositions: [NSValue] = []
     private var animatedIndicator: MaterialPageControlIndicator!
     private var trackLayer: MaterialPageControlTrackLayer!
     private var trackLength: CGFloat = 0.0
     private var isDeferredScrolling = false
+
+    // MARK: - Initializers
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -80,11 +87,34 @@ public class MaterialPageControl: UIControl {
         super.init(coder: aDecoder)
         commonMDCPageControlInit()
     }
-    
+
+    // MARK: - Lifecycle
+
+    override open func layoutSubviews() {
+        super.layoutSubviews()
+        if numberOfPages == 0 {
+            isHidden = true
+            return
+        }
+        isHidden = false
+
+        for pageNumber in 0..<indicators.count {
+            let indicator = indicators[pageNumber]
+            if pageNumber == Int(currentPage) {
+                indicator.isHidden = true
+            }
+            indicator.color = pageIndicatorTintColor
+        }
+        animatedIndicator.color = currentPageIndicatorTintColor
+        trackLayer.trackColor = pageIndicatorTintColor
+    }
+
+    // MARK: - Private
+
     private func commonMDCPageControlInit() {
-        let radius = MaterialPageControl.pageControlIndicatorRadius
+        let radius = pageIndicatorRadius
         let topEdge = CGFloat(floor(bounds.height - (radius * 2)) / 2)
-        let containerFrame = CGRect(x: 0, y: topEdge, width: bounds.width, height: radius * 2)
+        containerFrame = CGRect(x: 0, y: topEdge, width: bounds.width, height: radius * 2)
         containerView = UIView(frame: containerFrame)
         
         trackLayer = MaterialPageControlTrackLayer(radius: radius)
@@ -99,31 +129,21 @@ public class MaterialPageControl: UIControl {
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture(_:)))
         addGestureRecognizer(tapGestureRecognizer)
     }
-    
-    override open func layoutSubviews() {
-        super.layoutSubviews()
-        if numberOfPages == 0 {
-            isHidden = true
-            return
-        }
-        isHidden = false
-        
-        for pageNumber in 0..<indicators.count {
-            let indicator = indicators[pageNumber]
-            if pageNumber == Int(currentPage) {
-                indicator.isHidden = true
-            }
-            indicator.color = pageIndicatorTintColor
-        }
-        animatedIndicator.color = currentPageIndicatorTintColor
-        trackLayer.trackColor = pageIndicatorTintColor
+
+    private func updateContainerView(with pageIndicatorRadius: CGFloat) {
+        let topEdge = CGFloat(floor(bounds.height - (pageIndicatorRadius * 2)) / 2)
+        containerFrame = CGRect(x: 0, y: topEdge, width: bounds.width, height: pageIndicatorRadius * 2)
+
+        trackLayer = MaterialPageControlTrackLayer(radius: pageIndicatorRadius)
+        containerView.layer.addSublayer(trackLayer)
+        containerView.layoutIfNeeded()
     }
     
-    func setCurrentPage(_ currentPage: Int, animated: Bool) {
+    private func setCurrentPage(_ currentPage: Int, animated: Bool) {
         setCurrentPage(currentPage, animated: animated, duration: 0)
     }
     
-    func setCurrentPage(_ currentPage: Int, animated: Bool, duration: TimeInterval) {
+    private func setCurrentPage(_ currentPage: Int, animated: Bool, duration: TimeInterval) {
         let previousPage = self.currentPage
         let shouldReverse = previousPage > currentPage
         self.currentPage = currentPage
@@ -150,7 +170,7 @@ public class MaterialPageControl: UIControl {
             trackLayer.drawAndExtendTrack(fromStart: startPoint, toEnd: endPoint, completion: completionBlock)
         } else {
             let point = indicatorPositions[currentPage].cgPointValue
-            animatedIndicator.updateIndicatorTransformX(point.x - MaterialPageControl.pageControlIndicatorRadius)
+            animatedIndicator.updateIndicatorTransformX(point.x - pageIndicatorRadius)
             trackLayer.reset(at: point)
             
             CATransaction.begin()
@@ -160,34 +180,42 @@ public class MaterialPageControl: UIControl {
         }
     }
     
-    func isPageIndexValid(_ nextPage: Int) -> Bool {
+    private func isPageIndexValid(_ nextPage: Int) -> Bool {
         return nextPage >= 0 && nextPage < numberOfPages
     }
+
 }
 
 // MARK: - UIView(UIViewGeometry)
 
 extension MaterialPageControl {
+
     override open var intrinsicContentSize: CGSize {
-        return MaterialPageControl.sizeForNumber(ofPages: numberOfPages)
+        return sizeForNumber(forPageCount: numberOfPages,
+                             indicatorRadius: pageIndicatorRadius,
+                             indicatorMargin: pageIndicatorMargin)
     }
     
     override open func sizeThatFits(_ size: CGSize) -> CGSize {
-        return MaterialPageControl.sizeForNumber(ofPages: numberOfPages)
+        return sizeForNumber(forPageCount: numberOfPages,
+                             indicatorRadius: pageIndicatorRadius,
+                             indicatorMargin: pageIndicatorMargin)
     }
     
-    class func sizeForNumber(ofPages pageCount: Int) -> CGSize {
-        let radius = pageControlIndicatorRadius
-        let margin = pageControlIndicatorMargin
-        let width = CGFloat(pageCount) * ((radius * 2) + margin) - margin
-        let height = max(pageControlMinimumHeight, radius * 2)
+    func sizeForNumber(forPageCount pageCount: Int,
+                       indicatorRadius: CGFloat,
+                       indicatorMargin: CGFloat) -> CGSize {
+        let width = CGFloat(pageCount) * ((indicatorRadius * 2) + indicatorMargin) - indicatorMargin
+        let height = max(MaterialPageControl.pageControlMinimumHeight, indicatorRadius * 2)
         return CGSize(width: width, height: height)
     }
+
 }
 
 // MARK: - Scrolling
 
 extension MaterialPageControl {
+
     func scrolledPageNumber(_ scrollView: UIScrollView?) -> Int {
         let unboundedPageNumberLTR = lround(Double((scrollView?.contentOffset.x ?? 0.0) / (scrollView?.frame.size.width ?? 0.0)))
         let scrolledPageNumberLTR = max(0, min(numberOfPages - 1, unboundedPageNumberLTR))
@@ -202,6 +230,7 @@ extension MaterialPageControl {
         // the edge of its content, it will return either a negative value or value above 1.
         return MaterialPageControl.normalizeValue((scrollView?.contentOffset.x)!, 0, (scrollView?.contentSize.width ?? 0.0) - (scrollView?.frame.size.width ?? 0.0))
     }
+
 }
 
 // MARK: - UIScrollViewDelegate
@@ -231,7 +260,7 @@ extension MaterialPageControl: UIScrollViewDelegate {
             let scrolledPageNumberValue = scrolledPageNumber(scrollView)
             var startPoint = indicatorPositions[scrolledPageNumberValue].cgPointValue
             var endPoint = startPoint
-            let radius = MaterialPageControl.pageControlIndicatorRadius
+            let radius = pageIndicatorRadius
             if transformX > startPoint.x - radius {
                 if isRTL() {
                     endPoint = (indicatorPositions[scrolledPageNumberValue - 1]).cgPointValue
@@ -435,8 +464,8 @@ extension MaterialPageControl {
         }
         
         // Create indicators.
-        let radius = MaterialPageControl.pageControlIndicatorRadius
-        let margin = MaterialPageControl.pageControlIndicatorMargin
+        let radius = pageIndicatorRadius
+        let margin = pageIndicatorMargin
         for i in 0..<numberOfPages {
             let offsetX = CGFloat(i) * (margin + (radius * 2))
             let offsetY = radius
@@ -455,7 +484,9 @@ extension MaterialPageControl {
         
         // Resize container view to keep indicators centered.
         let frameWidth = containerView.frame.size.width
-        let controlSize = MaterialPageControl.sizeForNumber(ofPages: numberOfPages)
+        let controlSize = sizeForNumber(forPageCount: numberOfPages,
+                                        indicatorRadius: pageIndicatorRadius,
+                                        indicatorMargin: pageIndicatorMargin)
         containerView.frame = containerView.frame.insetBy(dx: (frameWidth - controlSize.width) / 2, dy: 0)
         trackLength = containerView.frame.width - (radius * 2)
         
@@ -464,7 +495,7 @@ extension MaterialPageControl {
         let center = CGPoint(x: radius, y: radius)
         let point = indicatorPositions[currentPage].cgPointValue
         animatedIndicator = MaterialPageControlIndicator(center: center, radius: radius)
-        animatedIndicator.updateIndicatorTransformX(point.x - MaterialPageControl.pageControlIndicatorRadius)
+        animatedIndicator.updateIndicatorTransformX(point.x - pageIndicatorRadius)
         containerView.layer.addSublayer(animatedIndicator)
         
         setNeedsLayout()

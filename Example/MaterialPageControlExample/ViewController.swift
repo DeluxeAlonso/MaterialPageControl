@@ -37,6 +37,7 @@ class ViewController: UIViewController {
         
         pageControl.pageIndicatorTintColor = .gray
         pageControl.currentPageIndicatorTintColor = .black
+
         pageControl.addTarget(self, action: #selector(didChangePage(sender:)), for: .valueChanged)
         pageControl.translatesAutoresizingMaskIntoConstraints = false
         
