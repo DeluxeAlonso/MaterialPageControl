@@ -18,12 +18,6 @@ public class MaterialPageControl: UIControl {
     // Matches native UIPageControl minimum height.
     private static let pageControlMinimumHeight: CGFloat = 48
     
-    // Matches native UIPageControl indicator radius.
-    //private static let pageControlIndicatorRadius = CGFloat(3.5)
-    
-    // Matches native UIPageControl indicator spacing margin.
-    //private static let pageControlIndicatorMargin = pageControlIndicatorRadius * 2.5
-    
     // Delay for revealing indicators staggered towards current page indicator.
     private static let pageControlIndicatorShowDelay: TimeInterval = 0.04
     
@@ -58,7 +52,7 @@ public class MaterialPageControl: UIControl {
         }
     }
 
-    public var pageIndicatorRadius: CGFloat = 3.5 {
+    public var pageIndicatorRadius: CGFloat = 10.0 {
         didSet {
             setNeedsLayout()
         }
