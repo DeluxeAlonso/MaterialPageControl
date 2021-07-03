@@ -92,12 +92,13 @@ public class MaterialPageControl: UIControl {
 
     override open func layoutSubviews() {
         super.layoutSubviews()
-        if numberOfPages == 0 {
+
+        guard numberOfPages != 0 else {
             isHidden = true
             return
         }
-        isHidden = false
 
+        isHidden = false
         for pageNumber in 0..<indicators.count {
             let indicator = indicators[pageNumber]
             if pageNumber == Int(currentPage) {
@@ -147,8 +148,8 @@ public class MaterialPageControl: UIControl {
         let previousPage = self.currentPage
         let shouldReverse = previousPage > currentPage
         self.currentPage = currentPage
-        
-        if numberOfPages == 0 { return }
+
+        guard numberOfPages > 0 else { return }
         
         if animated {
             var startPoint = indicatorPositions[previousPage].cgPointValue
