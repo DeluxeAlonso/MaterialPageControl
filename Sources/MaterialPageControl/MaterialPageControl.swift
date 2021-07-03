@@ -12,22 +12,22 @@ public class MaterialPageControl: UIControl {
     
     private static let materialPageControlBundle = "MaterialPageControl.bundle"
     
-    // The keypath for the content offset of a scrollview.
+    /// The keypath for the content offset of a scrollview.
     private static let materialPageControlScrollViewContentOffset = "bounds.origin"
     
-    // Matches native UIPageControl minimum height.
+    /// Matches native UIPageControl minimum height.
     private static let pageControlMinimumHeight: CGFloat = 48
     
-    // Delay for revealing indicators staggered towards current page indicator.
+    /// Delay for revealing indicators staggered towards current page indicator.
     private static let pageControlIndicatorShowDelay: TimeInterval = 0.04
     
-    // Default indicator opacity.
+    /// Default indicator opacity.
     private static let pageControlIndicatorDefaultOpacity = CGFloat(0.5)
     
-    // Default white level for current page indicator color.
+    /// Default white level for current page indicator color.
     private static let pageControlCurrentPageIndicatorWhiteColor = CGFloat(0.38)
     
-    // Default white level for page indicator color.
+    /// Default white level for page indicator color.
     private static let pageControlPageIndicatorWhiteColor = CGFloat(0.62)
     
     public var currentPage: Int = 0
@@ -80,12 +80,12 @@ public class MaterialPageControl: UIControl {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        commonMDCPageControlInit()
+        setupPageControl()
     }
     
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        commonMDCPageControlInit()
+        setupPageControl()
     }
 
     // MARK: - Lifecycle
@@ -111,7 +111,7 @@ public class MaterialPageControl: UIControl {
 
     // MARK: - Private
 
-    private func commonMDCPageControlInit() {
+    private func setupPageControl() {
         let radius = pageIndicatorRadius
         let topEdge = CGFloat(floor(bounds.height - (radius * 2)) / 2)
         containerFrame = CGRect(x: 0, y: topEdge, width: bounds.width, height: radius * 2)
@@ -122,7 +122,7 @@ public class MaterialPageControl: UIControl {
         containerView.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleTopMargin, .flexibleBottomMargin]
         addSubview(containerView)
         
-        // Defaults.
+        // Default values
         currentPage = 0
         currentPageIndicatorTintColor = UIColor(white: MaterialPageControl.pageControlCurrentPageIndicatorWhiteColor, alpha: 1)
         pageIndicatorTintColor = UIColor(white: MaterialPageControl.pageControlPageIndicatorWhiteColor, alpha: 1)
