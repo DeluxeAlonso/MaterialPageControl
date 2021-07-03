@@ -13,7 +13,7 @@ class ViewController: UIViewController {
     
     private let colors: [UIColor] = [.red, .blue, .black]
     
-    lazy var collectionView: UICollectionView = {
+    lazy private var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumInteritemSpacing = 0
@@ -32,7 +32,7 @@ class ViewController: UIViewController {
         return collectionView
     }()
     
-    lazy var pageControl: MaterialPageControl = {
+    lazy private var pageControl: MaterialPageControl = {
         let pageControl = MaterialPageControl()
         
         pageControl.pageIndicatorTintColor = .gray
@@ -90,6 +90,8 @@ class ViewController: UIViewController {
     
 }
 
+// MARK: - UICollectionViewDataSource
+
 extension ViewController: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -104,6 +106,8 @@ extension ViewController: UICollectionViewDataSource {
     }
     
 }
+
+// MARK: - UICollectionViewDelegate
 
 extension ViewController: UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
