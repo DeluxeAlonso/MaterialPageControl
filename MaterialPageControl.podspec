@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'MaterialPageControl'
-  s.version          = '1.1.1'
+  s.version          = '2.0.0'
   s.summary          = 'Material page control written entirely in Swift.'
  
   s.description      = <<-DESC
