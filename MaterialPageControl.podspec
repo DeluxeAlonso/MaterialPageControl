@@ -12,7 +12,7 @@ Material page control written entirely in Swift 5 with customizable attributes.
   s.author           = { 'Alonso Alvarez' => 'alonso.alvarez.dev@gmail.com' }
   s.source           = { :git => 'https://github.com/DeluxeAlonso/MaterialPageControl.git', :tag => s.version.to_s }
  
-  s.ios.deployment_target = '10.0'
+  s.ios.deployment_target = '13.0'
   s.source_files = 'Sources/MaterialPageControl/*'
   s.swift_version = "5.0"
   s.swift_versions = ['4.0', '4.2', '5.0']
