@@ -7,6 +7,10 @@
 
 Swift version of  [material-components-ios/PageControl](https://github.com/material-components/material-components-ios/tree/develop/components/PageControl) which is influenced by [Material Design specifications](https://material.io/develop/ios/components/page-controls/) for animations and layout.
 
+## Requirements
+
+MaterialPageControl requires iOS 13.0 and Swift 5.0 or above.
+
 ## Demo
 
 ![](Demo.gif)
@@ -15,7 +19,7 @@ Swift version of  [material-components-ios/PageControl](https://github.com/mater
 
 ### CocoaPods
 
-PageViewController is available through [CocoaPods](http://cocoapods.org). To install
+MaterialPageControl is available through [CocoaPods](http://cocoapods.org). To install
 it, simply add the following line to your Podfile:
 
 ```ruby

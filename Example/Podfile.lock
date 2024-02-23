@@ -1,5 +1,5 @@
 PODS:
-  - MaterialPageControl (1.0.2)
+  - MaterialPageControl (2.0.0)
 
 DEPENDENCIES:
   - MaterialPageControl (from `../`)
@@ -9,8 +9,8 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  MaterialPageControl: 4afe261037fdbc7e63a6ad90fdc408dbcfda7525
+  MaterialPageControl: e2b4eae1f11070f527c06f73e650d6a4ab6c6ab0
 
-PODFILE CHECKSUM: 27b2db2d95dcabd4a7667ece76e3e902378d16db
+PODFILE CHECKSUM: ddaeea2b5345d13f685f88c8247c153025332f10
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.11.3
